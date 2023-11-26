@@ -30,7 +30,6 @@ function OAuth() {
       navigate("/");
     } catch (error) {
       toast.error("Could Not authorize with google");
-      console.log(error);
     }
   }
   return (
