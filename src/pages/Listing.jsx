@@ -9,12 +9,16 @@ import "swiper/css/bundle";
 import { FaParking, FaShare } from "react-icons/fa";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaBath, FaBed, FaChair } from "react-icons/fa6";
+import { getAuth } from "firebase/auth";
+import Contact from "../Components/Contact";
 
 function Listing() {
+  const auth = getAuth();
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopy, setShareLinkCopy] = useState(false);
+  const [contactLandlord, setContactLandlord] = useState(false);
 
   useEffect(() => {
     async function fetchListing() {
@@ -72,7 +76,7 @@ function Listing() {
       )}
 
       <div className="m-4 flex flex-col md:flex-row max-w-6xl lg: mx-auto p-4 rounded-lg bg-white shadow-lg lg:space-x-5">
-        <div className="  w-full h-[200px] lg-[400px]  ">
+        <div className="  w-full  ">
           <p className="text-2xl font-bold mb-3 text-blue-900 ">
             {listing.name} - $
             {listing.offer
@@ -104,7 +108,7 @@ function Listing() {
             <span className="font-semibold">Description - </span>
             {listing.description}
           </p>
-          <ul className="flex items-center space-x-2 sm:space-x-10 text-sm font-semibold ">
+          <ul className="mb-6 flex items-center space-x-2 sm:space-x-10 text-sm font-semibold">
             <li className="flex items-center whitespace-nowrap">
               <FaBed className="text-lg mr-1" />
               {+listing.bedrooms > 1 ? `${listing.bedrooms} Beds ` : "1 Bed"}
@@ -124,6 +128,19 @@ function Listing() {
               {listing.furnished ? "Furnished" : "Not Furnished"}
             </li>
           </ul>
+          {listing.userRef !== auth.currentUser?.uid && !contactLandlord && (
+            <div className="mt-6 ">
+              <button
+                onClick={() => setContactLandlord(true)}
+                className="px-7 py-3 bg-blue-600 text-white font-medium text-sm uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg w-full text-center transition duration-150 ease-in-out mb-6"
+              >
+                Contact Landlord
+              </button>
+            </div>
+          )}
+          {contactLandlord && (
+            <Contact userRef={listing.userRef} listing={listing} />
+          )}
         </div>
         <div className="bg-blue-300 w-full h-[200px] lg-[400px] z-10 overflow-x-hidden"></div>
       </div>
